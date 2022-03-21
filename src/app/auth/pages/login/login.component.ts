@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+import  Swal  from "sweetalert2";
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -34,7 +35,7 @@ this.AuthService.login(email,password)
                      this.router.navigateByUrl('/dashboard') ;
                   }
                   else{
-                    
+                    Swal.fire('Error', authenticated, 'error');
                   }
                   
                 })
