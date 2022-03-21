@@ -37,7 +37,7 @@ return this.http.post<AuthResponse>(url, {email,password})
     }
 }),
   map( resp => resp.ok ),
-  catchError( err => of(false))
+  catchError( err => of(err.error.msg))
 );
 }
 
