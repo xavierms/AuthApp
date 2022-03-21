@@ -21,22 +21,29 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  saveToken(resp: any) {
-    localStorage.setItem('token', resp.token!);
-    this._user = {
-      name: resp.name!,
-      uid: resp.uid!,
-    };
-  }
+  // saveToken(resp: any) {
+  //   localStorage.setItem('token', resp.token!);
+  //   this._user = {
+  //     name: resp.name!,
+  //     uid: resp.uid!,
+  //     email: resp.email!
+  //   };
+  // }
   // #TODO: PIPE 
 register(name: string, email: string, password: string){
   const url = `${this.baseUrl}/auth/new`;
   return this.http.post<AuthResponse>(url, { name, email, password }).pipe(
-    tap((resp) => {
-      if (resp.ok) {
-        this.saveToken(resp);
+    // tap((resp) => {
+    //   if (resp.ok) {
+    //     localStorage.setItem('token', resp.token!);
+    //   }
+    // }
+    tap(({ok, token}) => {
+      if (ok) {
+        localStorage.setItem('token', token!);
       }
-    }),
+    }
+    ),
     map((resp) => resp.ok),
     catchError((err) => of(err.error.msg))
   );
@@ -47,7 +54,7 @@ register(name: string, email: string, password: string){
     return this.http.post<AuthResponse>(url, { email, password }).pipe(
       tap((resp) => {
         if (resp.ok) {
-          this.saveToken(resp);
+          localStorage.setItem('token', resp.token!);
         }
       }),
       map((resp) => resp.ok),
@@ -63,7 +70,12 @@ register(name: string, email: string, password: string){
     );
     return this.http.get<AuthResponse>(url, { headers }).pipe(
       map((resp) => {
-        this.saveToken(resp);
+        localStorage.setItem('token', resp.token!);
+        this._user = {
+          name: resp.name!,
+          uid: resp.uid!,
+          email: resp.email!
+        };
         return resp.ok;
       }),
       catchError((err) => of(false))
